@@ -1,0 +1,697 @@
+DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>⚛️ Chemical Bonding Animation ⚛️</title>
+
+    <style>
+
+        /* General Styles */
+
+        body {
+
+            font-family: 'Poppins', sans-serif;
+
+            text-align: center;
+
+            background: radial-gradient(circle, #ff0000, #800000);
+
+            color: white;
+
+            margin: 0;
+
+            padding: 0;
+
+            overflow: hidden;
+
+            position: relative;
+
+        }
+
+
+
+        /* Floating Atoms */
+
+        .floating-atom {
+
+            position: absolute;
+
+            width: 50px;
+
+            height: 50px;
+
+            background: rgba(255, 255, 255, 0.3);
+
+            border-radius: 50%;
+
+            animation: float 5s ease-in-out infinite;
+
+            z-index: 1; /* Ensure atoms stay behind the container */
+
+        }
+
+
+
+        @keyframes float {
+
+            0%, 100% { transform: translateY(0); }
+
+            50% { transform: translateY(-20px); }
+
+        }
+
+
+
+        /* Title Styling */
+
+        .title {
+
+            position: absolute;
+
+            top: 10%;
+
+            left: 50%;
+
+            transform: translateX(-50%);
+
+            font-size: 36px;
+
+            font-weight: bold;
+
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+
+            animation: float 3s ease-in-out infinite;
+
+            z-index: 3; /* Ensure title stays above everything */
+
+        }
+
+
+
+        /* Subtitle Styling */
+
+        .subtitle {
+
+            position: absolute;
+
+            top: 16%; /* Position below the main title */
+
+            left: 50%;
+
+            transform: translateX(-50%);
+
+            font-size: 18px;
+
+            color: rgba(255, 255, 255, 0.8);
+
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+
+            z-index: 3;
+
+        }
+
+
+
+        /* Container Styling */
+
+        .container {
+
+            margin-top: 180px; /* Adjusted to make space for the subtitle */
+
+            padding: 30px;
+
+            background: rgba(255, 255, 255, 0.2);
+
+            border-radius: 20px;
+
+            display: inline-block;
+
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.6);
+
+            position: relative;
+
+            z-index: 2; /* Ensure container stays above floating atoms */
+
+            backdrop-filter: blur(10px);
+
+        }
+
+
+
+        /* Canvas Styling */
+
+        canvas {
+
+            border-radius: 20px;
+
+            background: rgba(255, 255, 255, 0.1);
+
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.4);
+
+            position: relative;
+
+            z-index: 2;
+
+        }
+
+
+
+        /* Controls Styling */
+
+        .controls {
+
+            margin-top: 20px;
+
+        }
+
+
+
+        select, button {
+
+            margin: 10px;
+
+            padding: 15px;
+
+            font-size: 18px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            font-family: 'Poppins', sans-serif;
+
+            transition: all 0.3s ease;
+
+        }
+
+
+
+        select {
+
+            background: rgba(255, 255, 255, 0.2);
+
+            color: white;
+
+        }
+
+
+
+        select:hover {
+
+            background: rgba(255, 255, 255, 0.4);
+
+        }
+
+
+
+        button {
+
+            background-color: #ff6b6b;
+
+            color: white;
+
+            box-shadow: 0px 4px 15px rgba(255, 107, 107, 0.4);
+
+        }
+
+
+
+        button:hover {
+
+            background-color: #ff4757;
+
+            transform: scale(1.05);
+
+            box-shadow: 0px 6px 20px rgba(255, 71, 87, 0.6);
+
+        }
+
+
+
+        /* Molecule Box Styling */
+
+        .molecule-box {
+
+            margin-top: 20px;
+
+            padding: 15px;
+
+            background: rgba(0, 0, 0, 0.4);
+
+            border-radius: 15px;
+
+            display: inline-block;
+
+            width: 80%;
+
+            color: white;
+
+            font-size: 22px;
+
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5);
+
+            animation: fadeIn 1s ease-in-out;
+
+        }
+
+
+
+        @keyframes fadeIn {
+
+            from { opacity: 0; }
+
+            to { opacity: 1; }
+
+        }
+
+
+
+        /* Error Popup Styling */
+
+        .error-popup {
+
+            position: fixed;
+
+            top: 50%;
+
+            left: 50%;
+
+            transform: translate(-50%, -50%);
+
+            background: rgba(255, 0, 0, 0.9);
+
+            color: white;
+
+            padding: 20px;
+
+            border-radius: 10px;
+
+            font-size: 24px;
+
+            font-weight: bold;
+
+            z-index: 1000;
+
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.6);
+
+            animation: fadeIn 0.5s ease-in-out;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- Floating Atoms -->
+
+    <div class="floating-atom" style="top: 10%; left: 5%;"></div>
+
+    <div class="floating-atom" style="top: 20%; left: 80%;"></div>
+
+    <div class="floating-atom" style="top: 50%; left: 15%;"></div>
+
+    <div class="floating-atom" style="top: 70%; left: 70%;"></div>
+
+    <div class="floating-atom" style="top: 90%; left: 30%;"></div>
+
+
+
+    <!-- Main Title -->
+
+    <h1 class="title">⚛️ Chemical Bonding Animation ⚛️</h1>
+
+
+
+    <!-- Subtitle -->
+
+    <div class="subtitle">Done by Tala and Mariam</div>
+
+
+
+    <!-- Container -->
+
+    <div class="container">
+
+        <canvas id="bondCanvas" width="600" height="400"></canvas>
+
+        <div class="molecule-box" id="moleculeBox">Molecule: --</div>
+
+        <div class="controls">
+
+            <label for="element1">Element 1:</label>
+
+            <select id="element1">
+
+                <option value="Na">Sodium (Na)</option>
+
+                <option value="Cl">Chlorine (Cl)</option>
+
+                <option value="H">Hydrogen (H)</option>
+
+                <option value="O">Oxygen (O)</option>
+
+            </select>
+
+            <label for="element2">Element 2:</label>
+
+            <select id="element2">
+
+                <option value="Cl">Chlorine (Cl)</option>
+
+                <option value="Na">Sodium (Na)</option>
+
+                <option value="O">Oxygen (O)</option>
+
+                <option value="H">Hydrogen (H)</option>
+
+            </select>
+
+            <label for="bondType">Bond Type:</label>
+
+            <select id="bondType">
+
+                <option value="ionic">Ionic</option>
+
+                <option value="covalent">Covalent</option>
+
+            </select>
+
+            <button onclick="startAnimation()">Start Animation</button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Error Popup -->
+
+    <div id="errorPopup" class="error-popup" style="display: none;">Error</div>
+
+
+
+    <script>
+
+        // Chemistry Rules
+
+        const metals = ["Na"]; // List of metals
+
+        const nonMetals = ["Cl", "H", "O"]; // List of non-metals
+
+
+
+        function isValidBond(element1, element2, bondType) {
+
+            if (bondType === "ionic") {
+
+                // Ionic bond: Metal + Non-metal
+
+                return (
+
+                    (metals.includes(element1) && nonMetals.includes(element2)) ||
+
+                    (metals.includes(element2) && nonMetals.includes(element1))
+
+                );
+
+            } else if (bondType === "covalent") {
+
+                // Covalent bond: Non-metal + Non-metal
+
+                return nonMetals.includes(element1) && nonMetals.includes(element2);
+
+            }
+
+            return false;
+
+        }
+
+
+
+        function showError() {
+
+            const errorPopup = document.getElementById("errorPopup");
+
+            errorPopup.style.display = "block";
+
+            setTimeout(() => {
+
+                errorPopup.style.display = "none";
+
+            }, 2000); // Hide after 2 seconds
+
+        }
+
+
+
+        function startAnimation() {
+
+            const element1 = document.getElementById("element1").value;
+
+            const element2 = document.getElementById("element2").value;
+
+            const bondType = document.getElementById("bondType").value;
+
+
+
+            // Check if the bond is valid
+
+            if (!isValidBond(element1, element2, bondType)) {
+
+                showError();
+
+                return;
+
+            }
+
+
+
+            const canvas = document.getElementById("bondCanvas");
+
+            const ctx = canvas.getContext("2d");
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
+
+            let moleculeFormula = (element1 === element2) ? `${element1}₂` : `${element1}${element2}`;
+
+
+
+            function drawAtom(x, y, label, color, charge = "") {
+
+                ctx.fillStyle = color;
+
+                ctx.beginPath();
+
+                ctx.arc(x, y, 50, 0, Math.PI * 2);
+
+                ctx.fill();
+
+                ctx.fillStyle = "black";
+
+                ctx.font = "20px Poppins";
+
+                ctx.fillText(label, x - 10, y + 5);
+
+
+
+                // Draw charge if applicable
+
+                if (charge) {
+
+                    ctx.fillStyle = "white";
+
+                    ctx.font = "16px Poppins";
+
+                    ctx.fillText(charge, x + 30, y - 30);
+
+                }
+
+
+
+                // Glow Effect
+
+                ctx.shadowColor = color;
+
+                ctx.shadowBlur = 20;
+
+            }
+
+
+
+            function drawElectronTransfer(x1, y1, x2, y2) {
+
+                // Draw electron as a small circle
+
+                const electronRadius = 5;
+
+                let electronX = x1;
+
+                let electronY = y1;
+
+
+
+                const animateElectron = () => {
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    drawAtom(200, 200, element1, "blue");
+
+                    drawAtom(400, 200, element2, "red");
+
+
+
+                    // Draw moving electron
+
+                    ctx.fillStyle = "yellow";
+
+                    ctx.beginPath();
+
+                    ctx.arc(electronX, electronY, electronRadius, 0, Math.PI * 2);
+
+                    ctx.fill();
+
+
+
+                    // Move electron towards the second atom
+
+                    if (electronX < x2) electronX += 2;
+
+                    if (electronY < y2) electronY += 0;
+
+
+
+                    if (electronX < x2) {
+
+                        requestAnimationFrame(animateElectron);
+
+                    } else {
+
+                        // Draw resulting ions
+
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                        drawAtom(200, 200, element1, "blue", "+");
+
+                        drawAtom(400, 200, element2, "red", "-");
+
+                        document.getElementById("moleculeBox").innerText = `Molecule: ${moleculeFormula} (Ionic Bond)`;
+
+                    }
+
+                };
+
+
+
+                animateElectron();
+
+            }
+
+
+
+            function drawSharedElectrons(x1, y1, x2, y2) {
+
+                const midX = (x1 + x2) / 2;
+
+                const midY = (y1 + y2) / 2;
+
+
+
+                // Draw overlapping electron clouds
+
+                ctx.fillStyle = "rgba(255, 255, 0, 0.3)";
+
+                ctx.beginPath();
+
+                ctx.arc(midX, midY, 30, 0, Math.PI * 2);
+
+                ctx.fill();
+
+
+
+                // Draw shared electrons
+
+                ctx.fillStyle = "yellow";
+
+                ctx.beginPath();
+
+                ctx.arc(midX - 10, midY, 5, 0, Math.PI * 2);
+
+                ctx.arc(midX + 10, midY, 5, 0, Math.PI * 2);
+
+                ctx.fill();
+
+
+
+                // Draw resulting molecule
+
+                setTimeout(() => {
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    drawAtom(300, 200, moleculeFormula, "purple");
+
+                    document.getElementById("moleculeBox").innerText = `Molecule: ${moleculeFormula} (Covalent Bond)`;
+
+                }, 2000);
+
+            }
+
+
+
+            if (bondType === "ionic") {
+
+                // Ionic Bond Animation
+
+                drawAtom(200, 200, element1, "blue");
+
+                drawAtom(400, 200, element2, "red");
+
+
+
+                // Animate electron transfer
+
+                setTimeout(() => {
+
+                    drawElectronTransfer(250, 200, 350, 200);
+
+                }, 1000);
+
+            } else if (bondType === "covalent") {
+
+                // Covalent Bond Animation
+
+                drawAtom(200, 200, element1, "green");
+
+                drawAtom(400, 200, element2, "orange");
+
+
+
+                // Animate shared electrons
+
+                setTimeout(() => {
+
+                    drawSharedElectrons(250, 200, 350, 200);
+
+                }, 1000);
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
